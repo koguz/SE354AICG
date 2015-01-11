@@ -10,11 +10,12 @@ public class Lecture01 : MonoBehaviour {
 	void Start () {
 		vector1 = new Vector3(1, 2, 0);
 		vector2 = new Vector3(3, 4, 0);
-		float mag = vector1.magnitude;
-		Vector3 normalized_vector1 = vector1.normalized;
+		//float mag = vector1.magnitude;
+		//Vector3 normalized_vector1 = vector1.normalized;
 		vector1.Normalize();
-		Vector3 sum = vector1 + vector2;
-		Vector3 scalar = vector1 * 3;
+		vector1 = vector2.normalized;
+		//Vector3 sum = vector1 + vector2;
+		//Vector3 scalar = vector1 * 3;
 	}
 	
 	// Update is called once per frame
@@ -24,8 +25,8 @@ public class Lecture01 : MonoBehaviour {
 		}
 		// Vectors can also be used as positions
 		// Distance between this object and the target:
-		Vector3 distanceVector = target.position - transform.position;
-		float distance = distanceVector.magnitude; // I'm expecting to get 5
+		//Vector3 distanceVector = target.position - transform.position;
+		//float distance = distanceVector.magnitude; // I'm expecting to get 5
 		// Debug.Log (distance);
 
 		// Let's assume that the cube position gives the direction of the vector
