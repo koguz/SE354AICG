@@ -11,10 +11,10 @@ public class Flocking : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		seek = gameObject.AddComponent ("AISeek") as AISeek;
-		align = gameObject.AddComponent("AIAlign") as AIAlign;
-		wander = gameObject.AddComponent("AIWander") as AIWander;
-		separation = gameObject.AddComponent("AISeparation") as AISeparation;
+		seek = gameObject.AddComponent <AISeek>() as AISeek;
+		align = gameObject.AddComponent<AIAlign>() as AIAlign;
+		wander = gameObject.AddComponent<AIWander>() as AIWander;
+		separation = gameObject.AddComponent<AISeparation>() as AISeparation;
 
 		separation.threshold = 2.0f;
 		separation.maxAcceleration = 20;

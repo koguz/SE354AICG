@@ -31,10 +31,10 @@ public class FiringSolution : MonoBehaviour {
 		GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		sphere.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 		sphere.AddComponent<Rigidbody>();
-		sphere.rigidbody.drag = 0;
+		sphere.GetComponent<Rigidbody>().drag = 0;
 		// sphere.rigidbody.mass = 3f;
 		//sphere.rigidbody.AddForce(firingVector*firePower);
-		sphere.rigidbody.velocity = firingVector * firePower;
+		sphere.GetComponent<Rigidbody>().velocity = firingVector * firePower;
 	}
 
 	Vector3 cfs (Vector3 start, Vector3 end, float muzzle_v, Vector3 gravity)

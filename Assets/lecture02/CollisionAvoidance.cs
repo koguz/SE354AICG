@@ -35,7 +35,14 @@ public class CollisionAvoidance : MonoBehaviour {
 			/* Now that we know there is something ahead. */
 			float power = distanceToCheck / hit.distance; // can go to infinity!
 			if(power > 1000) power = 1000;
-			tempTarget = power * (transform.position - hit.transform.position);
+			Vector3 tempDir = Vector3.zero;
+			if (Vector3.Angle (transform.position, hit.transform.position) == 0) {
+				if (Random.Range (0, 1) == 0) {
+					tempDir = transform.right * 2; // this can be further improved?
+				} else
+					tempDir = transform.right * -2;
+			}
+			tempTarget = power * (transform.position - hit.transform.position + tempDir);
 		}
 		arrive.target = target + tempTarget;
 		k.transform.position = target + tempTarget;

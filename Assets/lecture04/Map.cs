@@ -36,11 +36,11 @@ public class Map : MonoBehaviour {
 					Quaternion.identity);
 				if (alan[i, j] == 1) {
 					g.transform.localScale = new Vector3(0.98f, 0.9f, 0.98f);
-					g.renderer.material = gray;
+					g.GetComponent<Renderer>().material = gray;
 				}
 				else {
 					g.transform.localScale = new Vector3(0.98f, 0.05f, 0.98f);
-					g.renderer.material = brown;
+					g.GetComponent<Renderer>().material = brown;
 				}
 			}
 		}
