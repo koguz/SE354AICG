@@ -13,7 +13,6 @@ public class FaultFormation : MonoBehaviour {
 		int x = myTData.heightmapWidth;
 
 		float[,] data = myTData.GetHeights (0, 0, x, y);
-		float[,] temp = myTData.GetHeights (0, 0, x, y);
 
 		// Fractal Terrain Generation: Fault Formation.
 		/* Briefly, choose two random points. Assume that 
@@ -54,7 +53,6 @@ public class FaultFormation : MonoBehaviour {
 					} else if (r.z > 0 && !left) {
 						data [a, b] += h; 
 					}
-					temp [a, b] = data [a, b];
 				}
 			}
 			h = h_0 + ((float)i / (float)N) * (h_n - h_0); 
@@ -71,7 +69,6 @@ public class FaultFormation : MonoBehaviour {
 		for (int i = 1; i < y; i++) {
 			for (int j = 1; j < x; j++) {
 				data [i, j] = k * data [i - 1, j] + (1 - k) * data [i, j];
-				temp [i, j] = data [i, j];
 			}
 		}
 
@@ -82,9 +79,9 @@ public class FaultFormation : MonoBehaviour {
 			s.Smooth (myTData);
 		}
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-	
+
 	}
 }
