@@ -8,6 +8,8 @@ public class MidpointDisplacement : MonoBehaviour
 	private float[,] data;
 	private int dHeight;
 	public bool UseGaussianSmoothing = true;
+	public bool NormaliseTerrain = true;
+	public int NormaliseOneOver = 3;
 
 	// Use this for initialization
 	void Start ()
@@ -75,23 +77,30 @@ public class MidpointDisplacement : MonoBehaviour
 		}
 
 		//this is normalization 
-		float minv = 1.0f;
-		float maxv = 0.0f;
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				if (data [i, j] > maxv)
-					maxv = data [i, j];
-				else if (data [i, j] < minv) {
-					minv = data [i, j];
+		if (NormaliseTerrain) {
+			float minv = 1.0f;
+			float maxv = 0.0f;
+			for (int i = 0; i < h; i++) {
+				for (int j = 0; j < w; j++) {
+					if (data [i, j] > maxv)
+						maxv = data [i, j];
+					else if (data [i, j] < minv) {
+						minv = data [i, j];
+					}
+				}
+			}
+			if (minv <= 0 || maxv >= 1.0f) {
+				// then we need to normalize.
+				// otherwise, keep it as it is...
+				float range = maxv - minv; // to be continued... tomorrow.
+				for (int i = 0; i < h; i++) {
+					for (int j = 0; j < w; j++) {
+						data [i, j] -= minv;
+						data [i, j] = data [i, j] / (NormaliseOneOver*range);
+					}
 				}
 			}
 		}
-		if (minv <= 0 || maxv >= 1.0f) {
-			// then we need to normalize.
-			// otherwise, keep it as it is...
-			float range = maxv - minv; // to be continued... tomorrow.
-		}
-
 				
 		
 		myTData.SetHeights (0, 0, data);
