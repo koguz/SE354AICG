@@ -1,15 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MidpointDisplacement : MonoBehaviour {
+public class MidpointDisplacement : MonoBehaviour
+{
 
 	private TerrainData myTData;
-	private float[,] data; 
+	private float[,] data;
 	private int dHeight;
 	public bool UseGaussianSmoothing = true;
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+	{
 		myTData = Terrain.activeTerrain.terrainData;
 		int h = myTData.heightmapHeight;
 		int w = myTData.heightmapWidth;
@@ -35,14 +37,29 @@ public class MidpointDisplacement : MonoBehaviour {
 
 		// seed
 
-		data [0, 0] = Random.value;
-		data [0, w - 1] = Random.value;
-		data [h - 1, 0] = Random.value;
-		data [w - 1, h - 1] = Random.value;
+		data [0, 0] = getRandomInitialValue ();
+		data [0, w - 1] = getRandomInitialValue ();
+		data [h - 1, 0] = getRandomInitialValue ();
+		data [w - 1, h - 1] = getRandomInitialValue ();
 
 		// it makes sense to make it a recursive function. 
-		Midpoint(0, 0, w-1, h-1, dHeight);
+		Midpoint (0, 0, w - 1, h - 1, dHeight);
 
+		float minv = 1.0f;
+		float maxv = 0.0f;
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				if (data [i, j] > maxv)
+					maxv = data [i, j];
+				else if (data [i, j] < minv) {
+					minv = data [i, j];
+				}
+			}
+		}
+
+		float range = maxv - minv; 
+				
+		
 		myTData.SetHeights (0, 0, data);
 
 		if (UseGaussianSmoothing) {
@@ -51,25 +68,56 @@ public class MidpointDisplacement : MonoBehaviour {
 		}
 	}
 
-	private void Midpoint(int x, int y, int w, int h, int H) {
+	private float getRandomH (int H)
+	{
+		return (float)(Random.Range (-H / 4, H / 4)) / (float)dHeight;
+	}
+
+	private float getRandomInitialValue ()
+	{
+		float r = Random.value;
+		if (r <= 0.25)
+			r = 0.02f;
+		else if (r <= 0.5)
+			r = 0.04f;
+		else if (r <= 0.75)
+			r = 0.06f;
+		else
+			r = 0.08f;
+		return r;
+	}
+
+	private void Midpoint (int x, int y, int w, int h, int H)
+	{
+		// Debug.Log ("Running: " + x + ", " + y + ", " + w + ":" + "h" + " - " + H);
 		// In a recursive function, first make sure you have the
 		// exit condition in place. 
-		if(w < 4) return; // let the smallest square be 10x10. 
+		if (w < 2)
+			return; // let the smallest square be 10x10. 
 		// write down four corners 
 		// x,y
 		// x+w, y
 		// x, y+h
 		// x+w, y+h
-		float ev = ((float)(data [x, y] + data [x + w, y] + data [x, y + h] + data [x + w, y + h]) / 4.0f)
-		           + (float)(Random.Range (-H / 2, H / 2)) / (float)dHeight;
+		float mid = ((float)(data [x, y] + data [x + w, y] + data [x, y + h] + data [x + w, y + h]) / 4.0f) + getRandomH (H);
+		data [x + (w / 2), y + (h / 2)] = mid;
+		// now the square step
+		// top center
+		data [x + (w / 2), y] = ((float)(data [x, y] + data [x + w, y] + mid) / 3.0f) + getRandomH (H);
+		// bottom center
+		data [x + (w / 2), y + h] =((float)(data [x, y + h] + data [x, y] + mid) / 3.0f) + getRandomH (H);
+		// left center
+		data [x, y + (h / 2)] = ((float)(data [x, y] + data [x, y + h] + mid) / 3.0f) + getRandomH (H);
+		// right center
+		data [x + w, y + (h / 2)] = ((float)(data [x + w, y + h] + data [x + w, y] + mid) / 3.0f) + getRandomH (H);
 
-		data [(x+w) / 2, (y+h) / 2] = ev; 
 		H = H / 2;
 
 		// now we will have four squares to recurse
 		// all have widths and heights as w/2, h/2
 		// starting points the same as above, but with new widths and heights. 
-		w = w/2; h=h/2;
+		w = w / 2;
+		h = h / 2;
 		Midpoint (x, y, w, h, H);
 		Midpoint (x + w, y, w, h, H);
 		Midpoint (x, y + h, w, h, H);
@@ -77,7 +125,8 @@ public class MidpointDisplacement : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+	{
 	
 	}
 }
