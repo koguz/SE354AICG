@@ -17,6 +17,7 @@ public class MidpointDisplacement : MonoBehaviour
 		int w = myTData.heightmapWidth;
 
 		dHeight = h;
+		int H = dHeight;
 
 		data = myTData.GetHeights (0, 0, w, h);
 
@@ -43,8 +44,37 @@ public class MidpointDisplacement : MonoBehaviour
 		data [w - 1, h - 1] = getRandomInitialValue ();
 
 		// it makes sense to make it a recursive function. 
-		Midpoint (0, 0, w - 1, h - 1, dHeight);
+		// Midpoint (0, 0, w - 1, h - 1, dHeight);
 
+		int ws = w-1; 
+
+		while (ws > 1) {
+			// how many squares do we have at this iteration? 
+			int ss = (w-1) / ws; 
+			for (int li = 0; li < ss; li++) {
+				for (int lj = 0; lj < ss; lj++) {
+					int px = li * ws; 
+					int py = lj * ws;
+					int pw = ws;
+					int ph = ws;
+					float mid = ((float)(data [px, py] + data [px + pw, py] + data [px, py + ph] + data [px + pw, py + ph]) / 4.0f) + getRandomH (H);
+					data [px + (pw / 2), py + (ph / 2)] = mid;
+					// now the square step
+					// top center
+					data [px + (pw / 2), py] = ((float)(data [px, py] + data [px + pw, py] + mid) / 3.0f) + getRandomH (H);
+					// bottom center
+					data [px + (pw / 2), py + ph] =((float)(data [px, py + ph] + data [px, py] + mid) / 3.0f) + getRandomH (H);
+					// left center
+					data [px, py + (ph / 2)] = ((float)(data [px, py] + data [px, py + ph] + mid) / 3.0f) + getRandomH (H);
+					// right center
+					data [px + pw, py + (ph / 2)] = ((float)(data [px + pw, py + ph] + data [px + pw, py] + mid) / 3.0f) + getRandomH (H);
+				}
+			}
+			H = H / 2;
+			ws = ws / 2;
+		}
+
+		//this is normalization 
 		float minv = 1.0f;
 		float maxv = 0.0f;
 		for (int i = 0; i < h; i++) {
@@ -56,8 +86,12 @@ public class MidpointDisplacement : MonoBehaviour
 				}
 			}
 		}
+		if (minv <= 0 || maxv >= 1.0f) {
+			// then we need to normalize.
+			// otherwise, keep it as it is...
+			float range = maxv - minv; // to be continued... tomorrow.
+		}
 
-		float range = maxv - minv; 
 				
 		
 		myTData.SetHeights (0, 0, data);
@@ -88,10 +122,7 @@ public class MidpointDisplacement : MonoBehaviour
 	}
 
 	private void Midpoint (int x, int y, int w, int h, int H)
-	{
-		// Debug.Log ("Running: " + x + ", " + y + ", " + w + ":" + "h" + " - " + H);
-		// In a recursive function, first make sure you have the
-		// exit condition in place. 
+	{   /* USE ITERATIVE METHOD - NOT RECURSIVE */
 		if (w < 2)
 			return; // let the smallest square be 10x10. 
 		// write down four corners 
