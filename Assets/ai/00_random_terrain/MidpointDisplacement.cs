@@ -29,8 +29,15 @@ public class MidpointDisplacement : MonoBehaviour
 		 * Start with a rectangle ABCD seeded with height values at the four corners. 
 		 * Calculate the height at the midpoint E by averaging the values at 
 		 * A, B, C, D and adding a random value between -dHeight/2 and dHeight/2. 
+		 * This is the diamond step. 
 		 * 
 		 * E = (A+B+C+D)/4 + random(-dHeight/2 + dHeight/2);
+		 * 
+		 * Then, update the top center, bottom center, left middle and right middle
+		 * points. This is called the square step. 
+		 * 
+		 * The procedure is shown in the figure under its Wikipedia article:
+		 * https://en.wikipedia.org/wiki/Diamond-square_algorithm 
 		 * 
 		 * Multiply dHeight by 2^(-r) and repeat for the sub-squares, until 
 		 * sufficient level of detail is reached. 
@@ -45,11 +52,7 @@ public class MidpointDisplacement : MonoBehaviour
 		data [h - 1, 0] = getRandomInitialValue ();
 		data [w - 1, h - 1] = getRandomInitialValue ();
 
-		// it makes sense to make it a recursive function. 
-		// Midpoint (0, 0, w - 1, h - 1, dHeight);
-
 		int ws = w-1; 
-
 		while (ws > 1) {
 			// how many squares do we have at this iteration? 
 			int ss = (w-1) / ws; 
@@ -59,6 +62,7 @@ public class MidpointDisplacement : MonoBehaviour
 					int py = lj * ws;
 					int pw = ws;
 					int ph = ws;
+					// diamond step first
 					float mid = ((float)(data [px, py] + data [px + pw, py] + data [px, py + ph] + data [px + pw, py + ph]) / 4.0f) + getRandomH (H);
 					data [px + (pw / 2), py + (ph / 2)] = mid;
 					// now the square step
@@ -92,7 +96,7 @@ public class MidpointDisplacement : MonoBehaviour
 			if (minv <= 0 || maxv >= 1.0f) {
 				// then we need to normalize.
 				// otherwise, keep it as it is...
-				float range = maxv - minv; // to be continued... tomorrow.
+				float range = maxv - minv; 
 				for (int i = 0; i < h; i++) {
 					for (int j = 0; j < w; j++) {
 						data [i, j] -= minv;
@@ -130,40 +134,6 @@ public class MidpointDisplacement : MonoBehaviour
 		return r;
 	}
 
-	private void Midpoint (int x, int y, int w, int h, int H)
-	{   /* USE ITERATIVE METHOD - NOT RECURSIVE */
-		if (w < 2)
-			return; // let the smallest square be 10x10. 
-		// write down four corners 
-		// x,y
-		// x+w, y
-		// x, y+h
-		// x+w, y+h
-		float mid = ((float)(data [x, y] + data [x + w, y] + data [x, y + h] + data [x + w, y + h]) / 4.0f) + getRandomH (H);
-		data [x + (w / 2), y + (h / 2)] = mid;
-		// now the square step
-		// top center
-		data [x + (w / 2), y] = ((float)(data [x, y] + data [x + w, y] + mid) / 3.0f) + getRandomH (H);
-		// bottom center
-		data [x + (w / 2), y + h] =((float)(data [x, y + h] + data [x, y] + mid) / 3.0f) + getRandomH (H);
-		// left center
-		data [x, y + (h / 2)] = ((float)(data [x, y] + data [x, y + h] + mid) / 3.0f) + getRandomH (H);
-		// right center
-		data [x + w, y + (h / 2)] = ((float)(data [x + w, y + h] + data [x + w, y] + mid) / 3.0f) + getRandomH (H);
-
-		H = H / 2;
-
-		// now we will have four squares to recurse
-		// all have widths and heights as w/2, h/2
-		// starting points the same as above, but with new widths and heights. 
-		w = w / 2;
-		h = h / 2;
-		Midpoint (x, y, w, h, H);
-		Midpoint (x + w, y, w, h, H);
-		Midpoint (x, y + h, w, h, H);
-		Midpoint (x + w, y + h, w, h, H);
-	}
-	
 	// Update is called once per frame
 	void Update ()
 	{
