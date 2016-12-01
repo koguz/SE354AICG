@@ -7,6 +7,7 @@ public class MidpointDisplacement : MonoBehaviour
 	private TerrainData myTData;
 	private float[,] data;
 	private int dHeight;
+	public int MapNumber = -1;
 	public bool UseGaussianSmoothing = true;
 	public bool NormaliseTerrain = true;
 	public int NormaliseOneOver = 3;
@@ -14,6 +15,9 @@ public class MidpointDisplacement : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		if (MapNumber > 0) {
+			Random.InitState (MapNumber);
+		}
 		myTData = Terrain.activeTerrain.terrainData;
 		int h = myTData.heightmapHeight;
 		int w = myTData.heightmapWidth;

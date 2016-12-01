@@ -19,8 +19,6 @@ public class RandomTerrain : MonoBehaviour
 		// The book is Game Programming Gems  1
 		// This is from page 484-5
 
-		/* Comment this out for other random generators */
-
 		for (int i = 0; i < y; i++) {
 			for (int j = 0; j < x; j++) {
 				Random.InitState (j + (j * i));
