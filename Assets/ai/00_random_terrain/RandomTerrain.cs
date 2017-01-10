@@ -36,8 +36,6 @@ public class RandomTerrain : MonoBehaviour
 			}
 		}
 
-		myTData.SetHeights (0, 0, data);
-
 		// FINAL STEP is SMOOTHING
 
 		// Nevermind the smoothing algorithms below. 
@@ -46,8 +44,9 @@ public class RandomTerrain : MonoBehaviour
 
 		if (UseGaussianSmoothing) {
 			GaussianSmooth s = new GaussianSmooth ();
-			s.Smooth (myTData);
+			s.Smooth (data);
 		}
+		myTData.SetHeights (0, 0, data);
 
 		// and I was right. Much better :) 
 

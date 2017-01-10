@@ -6,6 +6,11 @@ public class GaussianSmooth {
 	public int gaussianFilterSize = 3;
 	public float gaussianSigma = 1.1f;
 
+	public GaussianSmooth(int filterSize = 3, float sigma = 1.1f) {
+		gaussianFilterSize = filterSize;
+		gaussianSigma = sigma;
+	}
+
 	private float gaussian (float sigma, int x, int y)
 	{
 		float sq = sigma * sigma;
@@ -31,11 +36,14 @@ public class GaussianSmooth {
 		return filter;
 	}
 
-	public void Smooth (TerrainData myTData) {
-		int y = myTData.heightmapHeight;
-		int x = myTData.heightmapWidth;
-		float[,] data = myTData.GetHeights (0, 0, x, y);
-		float[,] temp = myTData.GetHeights (0, 0, x, y);
+	//public float[,] Smooth (TerrainData myTData) {
+	public float[,] Smooth (float[,] data) {
+		int x = data.GetLength (0);
+		int y = data.GetLength (1);
+		float[,] temp = new float[x,y]; 
+		for (int i = 0; i < x; i++)
+			for (int j = 0; j < y; j++)
+				temp [i, j] = data [i, j];
 
 		// Smooth using the Gaussian Filter... 
 		// Default size 3, sigma = 0.5f
@@ -55,12 +63,12 @@ public class GaussianSmooth {
 						int px = j - s + fj; 
 						if (px < 0 || px >= x)
 							continue;
-						val += filter [fi, fj] * temp [px, py];
+						val += filter [fi, fj] * temp [py, px];
 					}
 				}
 				data [i, j] = val; 
 			}
 		}
-		myTData.SetHeights (0,0,data);
+		return data; // myTData.SetHeights (0,0,data);
 	}
 }

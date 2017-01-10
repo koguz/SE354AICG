@@ -72,12 +72,12 @@ public class FaultFormation : MonoBehaviour {
 			}
 		}
 
-		myTData.SetHeights (0, 0, data);
-
 		if (UseGaussianSmoothing) {
 			GaussianSmooth s = new GaussianSmooth ();
-			s.Smooth (myTData);
+			s.Smooth (data);
 		}
+
+		myTData.SetHeights (0, 0, data);
 	}
 
 	// Update is called once per frame

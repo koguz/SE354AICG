@@ -9,6 +9,8 @@ public class MidpointDisplacement : MonoBehaviour
 	private int dHeight;
 	public int MapNumber = -1;
 	public bool UseGaussianSmoothing = true;
+	public int gaussianFilterSize = 3;
+	public float gaussianSigma = 1.1f;
 	public bool NormaliseTerrain = true;
 	public int NormaliseOneOver = 3;
 
@@ -83,6 +85,15 @@ public class MidpointDisplacement : MonoBehaviour
 			H = H / 2;
 			ws = ws / 2;
 		}
+		// myTData.SetHeights (0, 0, data);
+
+		// smooth first, then normalize...
+		if (UseGaussianSmoothing) {
+			GaussianSmooth s = new GaussianSmooth (gaussianFilterSize, gaussianSigma);
+			data = s.Smooth (data);
+			// data = s.Smooth (myTData);
+			// data = myTData.GetHeights (0, 0, w, h);
+		}
 
 		//this is normalization 
 		if (NormaliseTerrain) {
@@ -109,14 +120,8 @@ public class MidpointDisplacement : MonoBehaviour
 				}
 			}
 		}
-				
-		
-		myTData.SetHeights (0, 0, data);
 
-		if (UseGaussianSmoothing) {
-			GaussianSmooth s = new GaussianSmooth ();
-			s.Smooth (myTData);
-		}
+		myTData.SetHeights (0, 0, data);
 	}
 
 	private float getRandomH (int H)

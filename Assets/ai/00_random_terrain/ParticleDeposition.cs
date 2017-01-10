@@ -40,7 +40,7 @@ public class ParticleDeposition : MonoBehaviour {
 		}
 		myTData.SetHeights (0, 0, data);
 		GaussianSmooth s = new GaussianSmooth ();
-		s.Smooth (myTData);
+		s.Smooth (data);
 
 		// Now we can start the particle deposition. 
 		for (int i = 0; i < NumberOfPiles; i++) {
