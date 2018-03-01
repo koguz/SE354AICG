@@ -22,11 +22,24 @@ public class FixedCameraGroupMovement : MonoBehaviour {
 				// Debug.DrawRay (ray.origin, ray.direction * 100, Color.yellow);
 				Vector3 target = h.point;
 				target.y = 0.5f; // let's ignore y 
-				// Change KArrive to DArrive for dynamic version.
-				// GameObject.Find("Entity").GetComponent<KArrive>().target = target;
+
+				// find the center of gravity
+				Vector3 cog = Vector3.zero;
+				foreach (GameObject g in entities) {
+					cog += g.transform.position;
+				}
+				cog /= entities.Count;
+				cog.y = 0.5f;
+				// find the direction
+				Vector3 direction = cog - target;
+				direction.Normalize ();
+				Vector3 positions = Quaternion.Euler (0, 90, 0) * direction;
+				positions.Normalize ();
+
+
 				int v = -3;
 				foreach (GameObject g in entities) {
-					g.GetComponent<KArrive> ().target = target + (new Vector3 (0, 0, v));
+					g.GetComponent<KArrive> ().target = target + v * positions;
 					v += 2;
 				}
 			}
